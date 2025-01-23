@@ -1,0 +1,107 @@
+<!-- PLANTILLA JINJA BASE, SE HEREDA EN EL RESTO  -->
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    {% block head %}   
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Carga de Bootstrasp CSS v5.3.3 en local, en vez de directo al CDN. Todas las plantillas pueden usarlo al heredar de aqui -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    
+    
+    <title>{% block title %}{% endblock %}</title>
+    {% endblock %}
+</head>
+
+<body>
+    <!-- Barra de navegación superior de Bootstrap, responsive con navbar-toggler y collapse -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Botones desplegables, con funcionalidad de mostrarse si el usuario esta autenticado o no-->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home <span class="sr-only"></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="useradd" href="/useradd">Crear Usuario</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="datos" href="/gestdatos">Gestión de datos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="accidentes" href="/gestacc">Gestión de accidentes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="listaccidentes" href="/listacc">Listado de accidentes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="mediaplayer" href="/mediaplayer">Contenido Media Player</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="mensajes" href="/mensajes">Creación de mensajes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="prioritarios" href="/prioritarios">Mensajes prioritarios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="logout" href="/logout">Desconectar</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" id="login" href="/login">Iniciar</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+            Contenido de cada página de la aplicación 
+        {% endblock %}
+    </div>
+
+    <div id="footer">
+        {% block footer %}
+        <div style="text-align: center;">
+            <br>
+            &copy; Paninfo 2024. <a href="https://github.com/rarcones/PanInfo">Repositorio en GitHub</a>
+        </div>    
+        {% endblock %}
+    </div>
+
+    <!-- Mostrar los mensajes flash, creando variable "messages" e iterando entre ellos, con Bootstrap -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+                {% for category, message in messages %}
+                {% if category == 'NOK' %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% else %} <!-- Solo hay 2 categorias -->
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+                {% endfor %}
+        {% endif %}
+    {% endwith %}    
+
+    <!-- Carga de Bootstrasp JS v5.3.3 en local -->
+    <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+
+
+    
+ 
+</body>
+</html>

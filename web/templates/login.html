@@ -1,0 +1,19 @@
+<!-- PLANTILLA LOGIN -->
+
+{% extends "layout.html" %}
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+    <!-- Formulario con los dos campos para login -->
+    <form action="/login" method="post">
+        <h3 align="center">Acceso a la aplicación</h3>
+        <div class="mb-3"> 
+            <label for="username" class="form-label">Usuario</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Introduzca usuario">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="***">
+        </div>
+        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+{% endblock %}

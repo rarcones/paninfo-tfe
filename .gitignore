@@ -1,2 +1,4 @@
 venv_tfe
 web/__pycache__
+paninfo.db
+cargadatos.xlsx

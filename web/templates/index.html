@@ -1,0 +1,19 @@
+<!-- PAGINA PRINCIPAL "/" DE LA WEB -->
+
+{% extends "layout.html" %} {% block title %}PANINFO{% endblock %} {% block
+content %}
+<br />
+<h1 align="center">Panel Informativo Health & Safety</h1>
+<p align="center">
+  Bienvenido al sistema de gestión de contenido e información del panel
+  informativo
+</p>
+<p align="center">Inicie sesión para acceder a la aplicación</p>
+<br />
+<div style="text-align: center">
+  <img
+    src="{{ url_for('static', filename='trabajadorPRL.jpg') }}"
+    alt="Trabajador PRL anotando información"
+  />
+</div>
+{% endblock %}
