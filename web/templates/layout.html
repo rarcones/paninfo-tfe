@@ -63,22 +63,7 @@
         </div>
     </nav>
 
-    <div class="container">
-        {% block content %}
-            Contenido de cada página de la aplicación 
-        {% endblock %}
-    </div>
-
-    <div id="footer">
-        {% block footer %}
-        <div style="text-align: center;">
-            <br>
-            &copy; Paninfo 2025. <a href="https://github.com/rarcones/paninfo-tfe">Repositorio en GitHub</a>
-        </div>    
-        {% endblock %}
-    </div>
-
-    <!-- Mostrar los mensajes flash, creando variable "messages" e iterando entre ellos, con Bootstrap -->
+    <!-- Mostrar los mensajes flash, creando variable "messages" e iterando entre ellos, con Bootstrap. Código aquí para que se vea en la parte superior de la página -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
                 {% for category, message in messages %}
@@ -95,7 +80,22 @@
                 {% endif %}
                 {% endfor %}
         {% endif %}
-    {% endwith %}    
+    {% endwith %}  
+
+    <div class="container">
+        {% block content %}
+            Contenido de cada página de la aplicación 
+        {% endblock %}
+    </div>
+
+    <div id="footer">
+        {% block footer %}
+        <div style="text-align: center;">
+            <br>
+            &copy; Paninfo 2025. <a href="https://github.com/rarcones/paninfo-tfe">Repositorio en GitHub</a>
+        </div>    
+        {% endblock %}
+    </div>
 
     <!-- Carga de Bootstrasp JS v5.3.3 en local -->
     <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
