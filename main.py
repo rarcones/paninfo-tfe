@@ -1,11 +1,11 @@
-##ARRANQUE DE FLASK
+## ARRANQUE DE FLASK
 
-# Importar el paquete de la aplicación Flask creada en web/. Usa el fichero__init__
+# Importar el paquete y la función de la aplicación Flask que ha sido creado en web/ (Usa el fichero__init__.py).
 from web import create_app
 
-# Llamar a la función de creación/arranque
+# Llamar a la función de creación para crear la instancia "app"
 app = create_app()
 
-# Ejecución de servidor Flask solo arrancando desde el fichero main, se evita que arranque si se importa en otro programa
+# Ejecución de servidor Flask solo arrancando desde este fichero main, se evita que arranque si se importa en otro programa
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0') # Puerto 5000 por defecto. Modo debug para logging y reinicio cuando hay cambios
+    app.run(debug=True, host='0.0.0.0') # Arranca el servidor web de Flask con el puerto 5000 por defecto. Con modo debug activo para logging y reinicio cuando hay cambios

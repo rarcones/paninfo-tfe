@@ -1,3 +1,63 @@
-{% extends "layout.html" %} {% block title %}Título página home.html{%endblock%} {% block content %}
+<!-- PAGINA "/home", RESUMEN DEL CONTENIDO DETECTADO EN EMISION ACTUAL-->
+
+<!-- Definición de Jinja para añadir el contenido particular de esta página en los bloques de la plantilla base-->
+{% extends "layout.html" %} {% block title %}Título página home.html{%endblock%} 
+{% block content %}
+
+<!-- Código HTML de la página-->
+<h1 align="center" style="margin-bottom: 40px">Contenido en emisión</h1>
+
+<!-- Contenedor para representar los datos-->
+<div class="container card border-primary" style="margin-bottom: 40px">
+
+  <!-- Sección para Contenido Activo -->
+  <h3 align="center">Contenidos</h3>
+  <ul class="list-group mb-3 border border-secondary">
+    
+    <!-- Bucle para leer el contenido de la tabla contenido que se encuentre programado y mostrar el listado. La lógica se encuentra en el código de la vista [contenidos_act = Contenido.query.filter_by(programado=True).all()]  -->
+    {% for c in contenidos_act %}
+    <li class="list-group-item">
+      <strong>Orden</strong> {{ c.numero_orden }} | <strong>Ruta:</strong> {{c.ruta_contenido }}
+    </li>
+
+    <!-- Si no hay nada en la tabla, mensaje-->
+    {% endfor %} {% if not contenidos_act %}
+    <li class="list-group-item">No hay contenidos activos</li>
+    {% endif %}
+  </ul>
+
+  <!-- Sección para Mensajes Activos -->
+  <h3 align="center">Mensajes</h3>
+  <ul class="list-group mb-3 border border-secondary">
+
+    <!-- Bucle para leer todo el contenido de la tabla mensaje-->
+    {% for m in mensajes_act %}
+    <li class="list-group-item">
+      <strong>ID:</strong> {{ m.id }} | <strong>Titulo mensaje:</strong> {{m.titulo }}
+    </li>
+
+    <!-- Si no hay nada en la tabla, mensaje-->
+    {% endfor %} {% if not mensajes_act %}
+    <li class="list-group-item">No hay mensajes activos</li>
+    {% endif %}
+  </ul>
+
+  <!-- Sección para Mensajes Prioritarios Activos -->
+  <h3 align="center">Mensajes Prioritarios</h3>
+  <ul class="list-group mb-3 border border-secondary">
+
+    <!-- Bucle para leer el contenido de la tabla mensaje prioritario que se encuentre programado y con fecha en curso, y mostrar el listado-->
+    {% for mp in mens_prioritarios_act %}
+    <li class="list-group-item">
+      <strong>ID:</strong> {{ mp.id }} | <strong>Mensaje:</strong> {{ mp.mensaje
+      }}
+    </li>
+
+    <!-- Si no hay nada en la tabla, mensaje-->
+    {% endfor %} {% if not mens_prioritarios_act %}
+    <li class="list-group-item">No hay mensajes prioritarios activos</li>
+    {% endif %}
+  </ul>
+</div>
 
 {% endblock %}

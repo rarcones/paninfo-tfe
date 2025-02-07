@@ -1,8 +1,10 @@
-<!-- PLANTILLA JINJA BASE, SE HEREDA EN EL RESTO  -->
+<!-- PAGINA PLANTILLA JINJA BASE, CON LA DEFINICION DE LOS BLOQUES Y LOS ELEMENTOS QUE SE EXTIENDEN A TODAS LAS PAGINAS (Cuerpo, footer, navbar) -->
 
+<!-- Código HTML de la página-->
 <!DOCTYPE html>
 <html lang="es">
 
+<!-- Cabecera de la página, con definición de metadatos y carga de Bootstrap CSS en local. En cada página se carga este "block head" (sin modificaciones, tal cual aquí) y se adecúa el "block title" y "block content"-->
 <head>
     {% block head %}   
     <meta charset="UTF-8">
@@ -23,7 +25,8 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Botones desplegables, con funcionalidad de mostrarse si el usuario esta autenticado o no-->
+
+        <!-- Lista de los botones, con la característica de desplegables (Para que sea responsive), con funcionalidad de mostrarse si el usuario esta autenticado o no-->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if user.is_authenticated %}
@@ -37,16 +40,16 @@
                     <a class="nav-link" id="datos" href="/gestdatos">Gestión de datos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="accidentes" href="/gestacc">Gestión de accidentes</a>
+                    <a class="nav-link" id="accidentes" href="/gestacc">Nuevo accidente</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="listaccidentes" href="/listacc">Listado de accidentes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="mediaplayer" href="/mediaplayer">Contenido Media Player</a>
+                    <a class="nav-link" id="mediaplayer" href="/mediaplayer">Gestión de contenido</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="mensajes" href="/mensajes">Creación de mensajes</a>
+                    <a class="nav-link" id="mensajes" href="/mensajes">Gestión de mensajes</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="prioritarios" href="/prioritarios">Mensajes prioritarios</a>
@@ -63,7 +66,7 @@
         </div>
     </nav>
 
-    <!-- Mostrar los mensajes flash, creando variable "messages" e iterando entre ellos, con Bootstrap. Código aquí para que se vea en la parte superior de la página -->
+    <!-- Funcionalidad de mostrar mensajes al usuario, de tipo flash, creando variable "messages" e iterando entre ellos, con Bootstrap. Código ubicado aquí para que se vea en la parte superior de la página -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
                 {% for category, message in messages %}
@@ -72,7 +75,7 @@
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    {% else %} <!-- Solo hay 2 categorias -->
+                    {% else %} <!-- Solo hay 2 categorias NOK como alerta, por lo tanto OK como éxito-->
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -82,12 +85,14 @@
         {% endif %}
     {% endwith %}  
 
+    <!-- Cuerpo de la página. Toda la funcionalidad particular de cada pagina se codifica aquí. Aqui se ve claro el funcionamiento de los bloques, el mensaje "Contenido de..." no aparece nunca-->
     <div class="container">
         {% block content %}
             Contenido de cada página de la aplicación 
         {% endblock %}
     </div>
 
+    <!-- Pie de página, con la información del proyecto, recordando que se extiende (sin modificaciones, tal cual aquí) a todas las páginas que usen este bloque-->
     <div id="footer">
         {% block footer %}
         <div style="text-align: center;">
@@ -100,8 +105,5 @@
     <!-- Carga de Bootstrasp JS v5.3.3 en local -->
     <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
 
-
-    
- 
 </body>
 </html>

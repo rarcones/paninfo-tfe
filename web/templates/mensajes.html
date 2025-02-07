@@ -1,0 +1,79 @@
+<!-- PAGINA DE CREACION Y BORRADO DE MENSAJES A EMITIR, "/mensajes", -->
+
+<!-- Definición de Jinja para añadir el contenido particular de esta página en los bloques de la plantilla base-->
+{% extends "layout.html" %}
+{% block title %}Creacion de mensajes{% endblock %}
+{% block content %}
+
+<!-- Código HTML de la página-->
+<h1 align="center" style="margin-bottom: 40px;">Creación de mensajes a mostrar</h1>
+
+<!-- Contenedor para el formulario de creación de mensaje-->
+<div class="container card border-primary" style="margin-bottom: 40px;">
+    
+    <!-- Campos de introducción de texto-->
+    <form action="/mensajes" method="post">
+        <div class="mb-3 mt-3 d-flex align-items-center">
+            <label for="titulo" class="form-label me-2 text-end" style="width: 200px;">Asunto</label>
+            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="...">
+        </div>
+        <div class="mb-3 d-flex align-items-center">
+            <label for="mensaje" class="form-label me-2 text-end" style="width: 200px;">Mensaje</label>
+            <textarea name="mensaje" id="mensaje" class="form-control"></textarea>
+        </div>
+
+        <!-- Botón de envío del formulario mensaje-->
+        <button type="submit" class="btn btn-primary mb-3">Crear mensaje</button>
+    </form>
+
+    <!-- Listado mensajes-->
+    <h3 class="mt-5" align="center">Listado</h3>
+    <ul class="list-group mb-3 border border-secondary">
+
+        <!-- Bucle para recorrer los registros de la tabla mensajes y mostrarlos en la lista-->
+        {% for msg in list_mensajes %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><strong>{{ msg.titulo }}</strong> - {{ msg.mensaje }}</span>
+
+            <!-- Botón para abrir el modal de borrado en cada registro encontrado-->
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalBorrarMensaje{{ msg.id }}"> Eliminar </button>
+        </li>
+
+        <!-- Modal de borrado -->
+        <div class="modal fade" id="modalBorrarMensaje{{ msg.id }}" tabindex="-1"
+            aria-labelledby="modalBorrarMensajeLabel{{ msg.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalBorrarMensajeLabel{{ msg.id }}">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas eliminar el mensaje
+                        <strong>{{ msg.titulo }}</strong>?
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                        <!-- Botón de borrado -->
+                        <form method="POST" action="{{ url_for('views.mensajes_delete') }}">
+                            <input type="hidden" name="mensaje_id" value="{{ msg.id }}">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <!-- Si no hay nada en la tabla, mensaje-->
+        {% endfor %} {% if not list_mensajes %}
+        <li class="list-group-item">No hay mensajes creados</li>
+        {% endif %}
+    </ul>
+</div>
+
+{% endblock %}

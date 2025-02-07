@@ -1,0 +1,71 @@
+<!-- PAGINA DE SUBIDA DE FICHEROS DE CONTENIDO MULTIMEDIA, "/mediaplayer", -->
+
+<!-- Definición de Jinja para añadir el contenido particular de esta página en los bloques de la plantilla base-->
+{% extends "layout.html" %}
+{% block title %}Gestion de contenidos{% endblock %}
+{% block content %}
+
+<!-- Código HTML de la página-->
+    <h1 align="center" style="margin-bottom: 40px;">Gestión de contenidos a reproducir</h1>
+
+    <!-- Contenedor para el formulario de subida de contenido multimedia -->
+    <div class="container card border-primary" style="margin-bottom: 40px;">
+
+        <form action="/mediaplayer" method="post" enctype="multipart/form-data">
+            <!-- Campos del formulario -->
+            <!-- Se añade el campo "archivo" de tipo file para abrir la selección de archivo del sistema operativo-->
+            <div class="mb-3 mt-3 d-flex align-items-center">
+                <label for="archivo" class="form-label me-2 text-end" style="width: 200px;">Seleccione un archivo</label>
+                <input type="file" class="form-control" id="archivo" name="archivo" accept="application/pdf, image/jpg, image/jpeg, image/png, video/mp4, video/avi, video/mov, video/mpeg">
+            </div>
+            <div class="mb-3 mt-3 d-flex align-items-center">
+                <label for="numero_orden" class="form-label me-2 text-end" style="width: 200px;">Posición en la visualización</label>
+                <input type="text" class="form-control" id="numero_orden" name="numero_orden" placeholder="...">
+            </div>
+            <div class="mb-3 d-flex align-items-center">
+                <label class="form-check-label me-2" style="width: 170px;" for="programado">¿Programar contenido?</label>
+                <input class="form-check-input" type="checkbox" id="programado" name="programado">
+            </div>
+            <div class="mb-3 mt-3 d-flex align-items-center">
+                <label for="fecha_desde" class="form-label me-2 text-end" style="width: 200px;">Fecha desde</label>
+                <input type="datetime-local" class="form-control" id="fecha_desde" name="fecha_desde" step="60">
+            </div>
+            <div class="mb-3 mt-3 d-flex align-items-center">
+                <label for="fecha_hasta" class="form-label me-2 text-end" style="width: 200px;">Fecha hasta</label>
+                <input type="datetime-local" class="form-control" id="fecha_hasta" name="fecha_hasta" step="60">
+            </div>
+            <button type="submit" class="btn btn-primary mb-3">Subir contenido</button>
+        </form>
+        
+        <!-- Listado de contenidos -->
+        <h3 class="mt-5" align="center">Contenido en repositorio</h3>
+        <ul class="list-group mb-3 border border-secondary">
+            {% for contenido in list_contenidos %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <!-- <span> crea un contenedor inline para agrupar elementos sin añadir un salto de línea -->
+                <span>
+                    <strong>Ruta:</strong> {{ contenido.ruta_contenido }}
+                    {% if contenido.programado %}(PROGRAMADO){% endif %}<br>
+                    <strong>Orden:</strong> {{ contenido.numero_orden }}<br>
+                    <strong>Desde:</strong> {{ contenido.fecha_desde.strftime('%d/%m/%Y, %H:%M') if contenido.fecha_desde else '--' }}<br>
+                    <strong>Hasta:</strong> {{ contenido.fecha_hasta.strftime('%d/%m/%Y, %H:%M') if contenido.fecha_hasta else '--' }}
+                </span>
+                
+                <!-- Boton para ver el archivo multimedia y borrar el contenido-->
+                <div class="d-flex gap-2">
+                <a href="{{ url_for('static', filename=contenido.ruta_contenido.split('static/')[1]) }}" target="_blank" class="btn btn-info btn-sm">Ver</a>
+                <form action="{{ url_for('views.mediaplayer_delete') }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="contenido_id" value="{{ contenido.id }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
+                </div>
+            </li>
+
+            <!-- Si no hay nada en la tabla, mensaje-->
+            {% endfor %} {% if not list_contenidos %}
+            <li class="list-group-item">No hay contenido subido</li>
+            {% endif %}
+        </ul>
+    </div>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-## FICHERO "PLANTILLA" CON VISTAS/RUTAS GENERALES. USADE DESDE __init__.py
+## FICHERO "PLANTILLA" CON VISTAS/RUTAS GENERALES. USADO DESDE __init__.py
 
 # Librerias para la web
 from flask import Blueprint, render_template, flash, redirect, url_for, request, make_response, current_app # Clase Blueprint de Flask y funciones de Flask
@@ -7,10 +7,10 @@ from datetime import datetime # datetime para el manejo de horas/fecha
 # Librerias para el acceso a la base de datos
 from .models import Usuario, Empresa, TipoLesion, CausaLesion, Accidente, Contenido, Mensaje, MensajePrioritario  # Importar las clases de las tablas a usar desde la librería models (Fichero models.py)
 from . import db
-# Librerías para exportar csv
+# Librerías para exportar a csv
 import csv  # Para leer y escribir csv
 import io # Para manejo de ficheros
-# Para subir contenido
+# Librerías para para subir contenido
 from werkzeug.utils import secure_filename
 import os
 
@@ -18,20 +18,23 @@ import os
 views = Blueprint('views', __name__) 
 
 # Rutas (Páginas) de la aplicacion web
+# Define la ruta base. Cuando el usuario accede a la raíz de la web "/", se llama a la función que muestra ella plantilla index.html, con el valor de la variable user del usuario autenticado.
 @views.route('/')
 def index():
     return render_template("index.html", user=current_user)
 
+# Define la ruta de inicio al logarse el usuario
 @views.route('/home', methods=['GET'])
 @login_required
 def home(): 
     now = datetime.now()
-    #Contenido en emision actual en base a ciertas reglas, consultado a la BD
+    #Contenido en emision actual en base a ciertas reglas, consultado a las tablas de la BD
     contenidos_act = Contenido.query.filter_by(programado=True).all()
     mensajes_act = Mensaje.query.all()
     mens_prioritarios_act = (MensajePrioritario.query.filter(MensajePrioritario.activo==True, MensajePrioritario.mp_visualizado==False, MensajePrioritario.fecha_desde <= now,  MensajePrioritario.fecha_hasta >= now).all()) #Filtros exactos para mostrar solo los prioritarios en ejecucion
     return render_template("home.html", user=current_user, contenidos_act=contenidos_act, mensajes_act=mensajes_act, mens_prioritarios_act=mens_prioritarios_act) # Renderizar el template homepage.html con el usuario logeado
 
+# Define la ruta que muestra el listado de datos en las tres tablas auxiliares para el formulario de accidentes
 @views.route('/gestdatos', methods=['GET'])
 @login_required
 def gestdatos():
@@ -47,7 +50,8 @@ def gestdatos():
         list_causales=list_causales
     )
 
-@views.route('/gestdatos/addemp', methods=['POST']) # CON RUTA Y FORMULARIOS PARA CADA UNA
+# Define la ruta particular para añadir empresas
+@views.route('/gestdatos/addemp', methods=['POST']) 
 @login_required
 def addemp():
     nombre_empresa = request.form.get('nombre_empresa')
@@ -68,6 +72,7 @@ def addemp():
     flash('Empresa creada exitosamente.', category='OK')
     return redirect(url_for('views.gestdatos'))
 
+# Define la ruta particular para editar las empresas
 @views.route('/gestdatos/editemp/<int:empresa_id>', methods=['POST'])
 @login_required
 def editemp(empresa_id):
@@ -92,6 +97,7 @@ def editemp(empresa_id):
     flash('Empresa actualizada con éxito.', category='OK')
     return redirect(url_for('views.gestdatos'))
 
+# Define la ruta particular para añadir tipos de lesiones
 @views.route('/gestdatos/addtipo', methods=['POST'])
 @login_required
 def addtipo():
@@ -107,6 +113,7 @@ def addtipo():
     flash('Tipo de lesión creado exitosamente.', category='OK')
     return redirect(url_for('views.gestdatos'))
 
+# Define la ruta particular para borrar tipos de lesiones
 @views.route('/gestdatos/deltipo/<int:tipolesion_id>', methods=['POST'])
 @login_required
 def deltipo(tipolesion_id):
@@ -117,6 +124,7 @@ def deltipo(tipolesion_id):
     flash('Tipo de lesión eliminado con éxito.', category='OK')
     return redirect(url_for('views.gestdatos'))
 
+# Define la ruta particular para añadir causas de lesiones
 @views.route('/gestdatos/addcausa', methods=['POST'])
 @login_required
 def addcausa():
@@ -139,6 +147,7 @@ def addcausa():
     flash('Causa de lesión creada exitosamente.', category='OK')
     return redirect(url_for('views.gestdatos'))
 
+# Define la ruta particular para borrar causas de lesiones
 @views.route('/gestdatos/delcausa/<int:causalesion_id>', methods=['POST'])
 @login_required
 def delcausa(causalesion_id):
@@ -150,7 +159,7 @@ def delcausa(causalesion_id):
     return redirect(url_for('views.gestdatos'))
 
 
-
+# Define la ruta particular para mostrar el formulario de creación de accidentes
 @views.route('/gestacc', methods=['GET', 'POST'])
 @login_required 
 def gestacc():
@@ -159,7 +168,7 @@ def gestacc():
     if request.method == 'POST':
         # id_usuario = request.form.get('id_usuario') No se necesita, ya que el usuario actual es el que crea el accidente
         # Tampoco fecha de registro, ya que se añade automáticamente en el modelo
-        id_usuario = current_user.id
+        id_usuario = current_user.id # El id del usuario PRL que lo crea lo toma automáticamente del usuario logado
         id_empresa = request.form.get('id_empresa')
         id_causalesion = request.form.get('id_causalesion')
         id_tipolesion = request.form.get('id_tipolesion')
@@ -193,40 +202,10 @@ def gestacc():
 
     return render_template('gestacc.html', user=current_user, list_empresas=list_empresas, list_causas=list_causas, list_tipos=list_tipos)
 
-@views.route('/listacc', methods=['GET', 'POST']) # USAMOS OTRA RUTA PARA EXPORTAR CSV, SOBRE ESTA MISMA
+# Define la ruta para mostrar el listado de accidentes
+@views.route('/listacc', methods=['GET']) # Sólo GET para mostrar la información
 @login_required 
 def listacc():
-    if request.method == 'POST':
-        # Verificamos si es el formulario de edición del accidente
-        formulario = request.form.get('formulario')
-        if formulario == 'editar_accidente':
-            acc_id = request.form.get('acc_id')  # ID del accidente a editar
-            accidente = Accidente.query.get(acc_id)
-
-            # Recoger datos del formulario
-            id_empresa = request.form.get('id_empresa')
-            id_causalesion   = request.form.get('id_causalesion')
-            id_tipolesion    = request.form.get('id_tipolesion')
-            nombre_trabajador = request.form.get('nombre_trabajador')
-            es_baja = request.form.get('es_baja')  # 'on' si está marcado
-            fecha_baja = request.form.get('fecha_baja')
-            fecha_alta = request.form.get('fecha_alta')
-
-            # Actualizar objeto
-            accidente.id_empresa = id_empresa
-            accidente.id_causalesion = id_causalesion
-            accidente.id_tipolesion  = id_tipolesion
-            accidente.nombre_trabajador = nombre_trabajador
-            accidente.es_baja = True if es_baja == 'on' else False
-
-            accidente.fecha_baja = datetime.strptime(fecha_baja, '%Y-%m-%d') if fecha_baja else None
-            accidente.fecha_alta = datetime.strptime(fecha_alta, '%Y-%m-%d') if fecha_alta else None
-
-            db.session.commit()
-            flash("Accidente actualizado con éxito", category='OK')
-            return redirect(url_for('views.listacc'))
-
-    # Si es GET o no ha sido formulario de edición
     list_empresas = Empresa.query.all()
     list_causas   = CausaLesion.query.all()
     list_tipos    = TipoLesion.query.all()
@@ -234,6 +213,36 @@ def listacc():
 
     return render_template("listacc.html", list_empresas=list_empresas, list_causas=list_causas, list_tipos=list_tipos, list_accidentes=list_accidentes, user=current_user)
 
+# Define la ruta particular para editar accidentes
+@views.route('/listacc/editacc', methods=['POST'])
+@login_required 
+def editacc():
+    acc_id = request.form.get('acc_id')  # ID del accidente a editar
+    accidente = Accidente.query.get(acc_id)
+    
+    # Recoger datos del formulario
+    id_empresa = request.form.get('id_empresa')
+    id_causalesion   = request.form.get('id_causalesion')
+    id_tipolesion    = request.form.get('id_tipolesion')
+    nombre_trabajador = request.form.get('nombre_trabajador')
+    es_baja = request.form.get('es_baja')  # 'on' si está marcado
+    fecha_baja = request.form.get('fecha_baja')
+    fecha_alta = request.form.get('fecha_alta')
+    
+    # Actualizar objeto
+    accidente.id_empresa = id_empresa
+    accidente.id_causalesion = id_causalesion
+    accidente.id_tipolesion  = id_tipolesion
+    accidente.nombre_trabajador = nombre_trabajador
+    accidente.es_baja = True if es_baja == 'on' else False
+    accidente.fecha_baja = datetime.strptime(fecha_baja, '%Y-%m-%d') if fecha_baja else None
+    accidente.fecha_alta = datetime.strptime(fecha_alta, '%Y-%m-%d') if fecha_alta else None
+    
+    db.session.commit()
+    flash("Accidente actualizado con éxito", category='OK')
+    return redirect(url_for('views.listacc'))
+
+# Define la ruta particular para exportar el listado de accidentes a csv
 @views.route('/listacc/exportacc', methods=['GET'])
 @login_required 
 def exportacc():
@@ -243,41 +252,46 @@ def exportacc():
     output = io.StringIO(newline='')
     writer = csv.writer(output, delimiter=';') # Por defecto Excel no separa por comas correctamente, si añadimos que separe por ; si funciona. 
 
-    # Escribir la cabecera
+    # Escribir la cabecera del csv para identificar las columnas
     writer.writerow(['ID', 'FECHA REGISTRO', 'USUARIO PRL', 'EMPRESA', 'CAUSA', 'TIPO', 'NOMBRE TRABAJADOR', 'BAJA', 'FECHA BAJA', 'FECHA ALTA'])
 
     # Leer los datos de la tabla y escribirlos en el CSV
     for acc in accidentes:
         writer.writerow([ acc.id, acc.fecha_registro.strftime('%d/%m/%Y') if acc.fecha_registro else "", acc.usuario.usuario if acc.usuario else "", acc.empresa.nombre_empresa if acc.empresa else "", acc.causa_lesion.causa if acc.causa_lesion else "", acc.tipo_lesion.tipo if acc.tipo_lesion else "", acc.nombre_trabajador, acc.es_baja, acc.fecha_baja.strftime('%d/%m/%Y') if acc.fecha_baja else "", acc.fecha_alta.strftime('%d/%m/%Y') if acc.fecha_alta else ""])
 
-    # Descarga
+    # Descarga mediante respuesta HTTP que hace que el navegador lo ejecute como un archivo adjunto para descargar
     response = make_response(output.getvalue())
     response.headers["Content-Disposition"] = "attachment; filename=ListadoAccidentes.csv"
     response.headers["Content-Type"] = "text/csv; charset=utf-8"
 
     return response
 
+# Define la ruta de la página de creación de contenido
 @views.route('/mediaplayer', methods=['GET', 'POST'])
 @login_required 
 def mediaplayer():
     if request.method == 'POST':
-        # 1. Obtener datos del formulario
+        # Obtener datos del formulario
         archivo = request.files.get('archivo')
         numero_orden = request.form.get('numero_orden')
         programado = True if request.form.get('programado') == 'on' else False
         fecha_desde_str = request.form.get('fecha_desde')
         fecha_hasta_str = request.form.get('fecha_hasta')
-
-        # Manejo de fechas
         fecha_desde = datetime.strptime(fecha_desde_str, '%Y-%m-%dT%H:%M') if fecha_desde_str else None
         fecha_hasta = datetime.strptime(fecha_hasta_str, '%Y-%m-%dT%H:%M') if fecha_hasta_str else None
 
-        # 2. Validar archivo
+        # Validación de fichero cargado
         if not archivo:
-            flash('No se seleccionó ningún archivo', category='NOK')
+            flash('No se seleccionó ningún fichero', category='NOK')
             return redirect(url_for('views.mediaplayer'))
         
-        # Numero_orden simpre >1 para dejar el 0 a los mensajas, y si no se proporciona, asignar "1000" por defecto
+        # Validación de tamaño del fichero. Máximo 200 MB
+        content_length = request.content_length  
+        if content_length and content_length > 200 * 1024 * 1024:
+            flash('El fichero supera el máximo permitido de 200 MB', category='NOK')
+            return redirect(url_for('views.mediaplayer'))
+
+        # Numero_orden simpre >1 para dejar el 0 a los mensajes y que se muestren siempre primero, y si no se proporciona, significa que no hay prioridad, asi que asignar "999" por defecto
         if not numero_orden or numero_orden.strip() == "":
             numero_orden = "999"
         else:
@@ -294,26 +308,25 @@ def mediaplayer():
 
         if programado:
             if not fecha_desde or not fecha_hasta:
-                flash('Contenido programado, es obligatorio definir rango de emisión', 'NOK')
-                return render_template("prioritarios.html", user=current_user)  # Ajusta tu render
+                flash('Contenido programado, es obligatorio también definir rango de emisión', 'NOK')
+                return render_template("mediaplayer.html", user=current_user)
             if fecha_desde > fecha_hasta:
                 flash('Fecha de inicio debe ser siempre menor a la fecha de fin', 'NOK')
-                return render_template("prioritarios.html", user=current_user)
-
-        # 3. Procesar el nombre del fichero
-        nombre_original = secure_filename(archivo.filename)
+                return render_template("mediaplayer.html", user=current_user)
+        
         # Si número de orden se ha proporcionado, se antepone como prefijo seguido de un guión bajo.
+        nombre_original = secure_filename(archivo.filename)
         if numero_orden:
             nombre_ordenado = f"{numero_orden}_{nombre_original}"
         else:
             nombre_ordenado = nombre_original
         
-        # Guardar el archivo en el directorio estático
+        # Guardar el archivo en el directorio repositorio
         ruta_archivo = os.path.join(current_app.config['UPLOAD_FOLDER'], nombre_ordenado)
         archivo.save(ruta_archivo)
 
-        # 3. Guardar en la base de datos
-        ruta_relativa = f'web/static/media/{nombre_ordenado}'  # Ruta relativa para la BD
+        # Guardar registro en la base de datos
+        ruta_relativa = f'web/static/media/{nombre_ordenado}'  # Ruta relativa para la BD, formato Linux
         nuevo_contenido = Contenido(ruta_contenido=ruta_relativa, numero_orden=numero_orden, programado=programado, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta)
         db.session.add(nuevo_contenido)
         db.session.commit()
@@ -321,10 +334,11 @@ def mediaplayer():
         flash('Contenido cargado con éxito', category='OK')
         return redirect(url_for('views.mediaplayer'))
 
-    # GET: Mostrar la plantilla
+    # GET: Mostrar el listado de los contenidos subidos
     list_contenidos = Contenido.query.order_by(Contenido.numero_orden.asc()).all() # Para mostrar el contenido por su numero de orden
     return render_template("mediaplayer.html", user=current_user, list_contenidos=list_contenidos)
 
+# Define la ruta particular para eliminar contenido multimedia
 @views.route('/mediaplayer/delmedia', methods=['GET', 'POST'])
 @login_required 
 def mediaplayer_delete():
@@ -335,7 +349,7 @@ def mediaplayer_delete():
 
     contenido = Contenido.query.get(contenido_id)
     
-    #Creado para solucionar el problema de la ruta de los ficheros multimedia, que se duplicaba el web usando current_app.root_path (c:\Users\R\Desktop\paninfo\web\web\static\media\1_CABEZA.avi)
+    #Creado para solucionar el problema de la ruta de los ficheros multimedia, que se duplica "web" usando current_app.root_path (paninfo\web\web\static\media\1_CABEZA.avi)
     paninfo_root = os.path.dirname(current_app.root_path) 
 
     # Eliminar el archivo del sistema
@@ -353,7 +367,8 @@ def mediaplayer_delete():
     flash('Contenido eliminado con éxito.', category='OK')
     return redirect(url_for('views.mediaplayer'))
 
-@views.route('/mensajes', methods=['GET', 'POST'])  # EJEMPLO CON DOS RUTAS, LA OTRA PARA ELIMINAR
+# Define la ruta de la creación de mensajes
+@views.route('/mensajes', methods=['GET', 'POST']) 
 @login_required 
 def mensajes():
         if request.method == 'POST':  # Obtener los datos del formulario
@@ -377,6 +392,7 @@ def mensajes():
 
         return render_template("mensajes.html", user=current_user, list_mensajes=list_mensajes)
 
+# Define la ruta particular de borrado de mensajes
 @views.route('/mensajes/delmen', methods=['POST'])
 @login_required
 def mensajes_delete():
@@ -393,7 +409,7 @@ def mensajes_delete():
 
     return redirect(url_for('views.mensajes'))
 
-
+# Define la ruta para la creación de mensajes prioritarios
 @views.route('/prioritarios', methods=['GET', 'POST'])
 @login_required 
 def prioritarios():
@@ -411,7 +427,7 @@ def prioritarios():
         # Validaciones para que se rellenen las dos fechas y fecha_desde no sea mayor que hasta
         if activo:
             if not fecha_desde or not fecha_hasta:
-                flash('Mensaje activado, es obligatorio definir rango de emisión', 'NOK')
+                flash('Mensaje prioritario activado, es obligatorio también definir rango de emisión', 'NOK')
                 return render_template("prioritarios.html", user=current_user)  # Ajusta tu render
             if fecha_desde > fecha_hasta:
                 flash('Fecha de inicio debe ser siempre menor a la fecha de fin', 'NOK')
@@ -429,6 +445,7 @@ def prioritarios():
 
     return render_template("prioritarios.html", user=current_user, list_mensprio=list_mensprio)
 
+# Define la ruta particular para borrar mensajes prioritarios
 @views.route('/prioritarios/delprio', methods=['POST'])
 @login_required
 def prioritarios_delete():

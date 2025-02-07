@@ -1,0 +1,75 @@
+<!-- PAGINA CREACION ACCIDENTES "/gestacc", FORMULARIO DE CREACION -->
+
+<!-- Definición de Jinja para añadir aqui el contenido de la plantilla base y rellenar los bloques de título y contenido particular de gestion de accidente-->
+{% extends "layout.html" %}
+{% block title %}Gestion de accidentes{% endblock %}
+{% block content %}
+
+<!-- Código HTML de la página-->
+<h1 align="center" style="margin-bottom: 40px;">Alta de nuevo accidente en la instalación</h1>
+
+<!-- Contenedor para el formulario de creación de accidente -->
+<div class="container card border-primary" style="margin-bottom: 40px;">
+    
+    <form action="/gestacc" method="POST">
+
+    <!-- Campos desplegables con los valores leidos de las tablas auxiliares correspondientes en la BBDD. Bucles for para listar las ocurrencias -->
+    <div class="mt-3 mb-3 d-flex align-items-center">
+        <label for="id_empresa" class="form-label me-2 text-end" style="width: 200px;">Empresa</label>
+        <select class="form-select" id="id_empresa" name="id_empresa" required>
+            <option value="">Seleccione una empresa</option>
+            {% for empresa in list_empresas %}
+            <option value="{{ empresa.id }}">{{ empresa.nombre_empresa }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3 d-flex align-items-center">
+        <label for="id_causalesion" class="form-label me-2 text-end" style="width: 200px;">Causa de la lesión</label>
+        <select class="form-select" id="id_causalesion" name="id_causalesion" required>
+            <option value="">Seleccione la causa</option>
+            {% for causa_lesion in list_causas %}
+            <option value="{{ causa_lesion.id }}">{{ causa_lesion.causa }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3 d-flex align-items-center">
+        <label for="id_tipolesion" class="form-label me-2 text-end" style="width: 200px;">Tipo de lesión</label>
+        <select class="form-select" id="id_tipolesion" name="id_tipolesion" required>
+            <option value="">Seleccione el tipo de lesión</option>
+            {% for tipo_lesion in list_tipos %}
+            <option value="{{ tipo_lesion.id }}">{{ tipo_lesion.tipo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Campos para el nombre -->
+    <div class="mb-3 d-flex align-items-center">
+        <label for="nombre_trabajador" class="form-label me-2 text-end" style="width: 200px;">Nombre del trabajador</label>
+        <input type="text" class="form-control" id="nombre_trabajador" name="nombre_trabajador" placeholder="...">
+    </div>
+
+    <!-- Checkbox para marcar si es baja -->
+    <div class="mb-3 d-flex align-items-center">
+        <label class="form-check-label me-2" style="width: 170px;" for="es_baja">¿Accidente con baja?</label>
+        <input class="form-check-input" type="checkbox" name="es_baja" id="es_baja">
+    </div>
+
+    <!-- input date de HTML para mostrar calendario -->
+    <div class="mb-3 d-flex align-items-center">
+        <label for="fecha_baja" class="form-label me-2 text-end" style="width: 200px;">Fecha de baja</label>
+        <input type="date" class="form-control" id="fecha_baja" name="fecha_baja">
+    </div>
+    <div class="mb-3 d-flex align-items-center">
+        <label for="fecha_alta" class="form-label me-2 text-end" style="width: 200px;">Fecha de alta</label>
+        <input type="date" class="form-control" id="fecha_alta" name="fecha_alta">
+    </div>
+    
+    <!-- Botón para grabar los datos-->
+    <div>
+        <button type="submit" class="btn btn-primary mb-3">Grabar accidente</button>
+    </div>
+    </form>
+
+</div>
+
+{% endblock %}

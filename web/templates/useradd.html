@@ -1,0 +1,53 @@
+<!-- PAGINA FORMULARIO CREACION USUARIOS NUEVOS, "/useradd" -->
+
+<!-- Definición de Jinja para añadir el contenido particular de esta página en los bloques de la plantilla base-->
+{% extends "layout.html" %} {% block title %}Nuevo usuario{% endblock %} {%
+block content %}
+
+<!-- Código HTML de la página-->
+<h1 align="center" style="margin-bottom: 40px">Creación de nuevo usuario</h1>
+
+<!-- Contenedor, recordemos que sirve para agrupar el contenido, usando el objeto container de Bootstrap-->
+<div class="container card border-primary" style="margin-bottom: 40px"> 
+    
+    <!-- Formulario de creación de usuario -->
+    <form action="/useradd" method="post">
+
+    <div class="mb-3 mt-3 d-flex align-items-center">
+      <label for="username" class="form-label me-2 text-end" style="width: 200px" >Nombre de usuario</label>
+      <input type="text" class="form-control" id="username" name="username" placeholder="..."/>
+    </div>
+
+    <div class="mb-3 d-flex align-items-center">
+      <label for="password" class="form-label me-2 text-end" style="width: 200px">Contraseña</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="***"/>
+    </div>
+
+    <div class="mb-3 d-flex align-items-center">
+      <label for="passwordCheck" class="form-label me-2 text-end" style="width: 200px">Repetir Contraseña</label>
+      <input type="password" class="form-control" id="passwordCheck" name="passwordCheck" placeholder="***"/>
+    </div>
+    <!-- Botón de envío del formulario de creación de usuario -->
+    <button type="submit" class="btn btn-primary mb-3">Crear usuario</button>
+  </form>
+
+  <!-- Listado de usuarios existentes. Recordemos que el usuario administrador, no se muestra, por el código de la vista [usuarios = Usuario.query.filter(Usuario.id > 1).all()] -->
+  <h3 class="mt-5" align="center">Listado</h3>
+  <ul class="list-group mb-3 border border-secondary">
+
+    <!-- Bucle para recorrer los registros de la tabla usuarios y mostrarlos en la lista-->
+    {% for usu in list_users %} <!-- {# Código Jinja para estructuras de control {{%%}}, el valor se obtiene en la vista #} -->
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>
+        <strong>{{ usu.usuario }}</strong> <!-- {# Código Jinja para mostrar valor de las variables {{}} #} -->
+      </span>
+    </li>
+
+    <!-- Si no hay registros, mensaje-->
+    {% endfor %} {% if not list_users %}
+    <li class="list-group-item">No hay usuarios adicionales creados</li>
+    {% endif %}
+  </ul>
+</div>
+
+{% endblock %}

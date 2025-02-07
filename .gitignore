@@ -1,4 +1,7 @@
+.gitignore
 venv_tfe
+__pycache__
 web/__pycache__
-paninfo.db
-cargadatos.xlsx
+web/paninfo.db
+extras
+core/source/SATE

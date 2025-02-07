@@ -1,0 +1,97 @@
+<!-- PAGINA DE CREACION Y BORRADO DE MENSAJES PRIORITARIOS A EMITIR, "/prioritarios", -->
+
+<!-- Definición de Jinja para añadir el contenido particular de esta página en los bloques de la plantilla base-->
+{% extends "layout.html" %}
+{% block title %}Aviso prioritario{% endblock %}
+{% block content %}
+
+<!-- Código HTML de la página-->
+<h1 align="center" style="margin-bottom: 40px;">Creación de mensajes prioritarios con emisión inmediata</h1>
+
+<!-- Contenedor para el formulario de creación de mensaje prioritario-->
+<div class="container card border-primary" style="margin-bottom: 40px;">
+
+    <!-- Campos del formulario-->
+    <form action="/prioritarios" method="POST">
+        <div class="mb-3 mt-3 d-flex align-items-center">
+            <label for="mensaje" class="form-label me-2 text-end" style="width: 200px;">Mensaje</label>
+            <input type="text" class="form-control" id="mensaje" name="mensaje" placeholder="...">
+        </div>
+        <div class="mb-3 d-flex align-items-center">
+            <label class="form-check-label me-2 text-end" style="width: 170px;" for="activar">Activar</label>
+            <input class="form-check-input" type="checkbox" id="activar" name="activar" required>
+        </div>
+        <!-- Campos de fecha con parámetro step="60", que crea saltos de 60secs en 60secs para que siempre queden en :00 exactos los segundos. Menos trabajo para el usuario -->
+        <div class="mb-3 d-flex align-items-center">
+            <label for="fecha_desde" class="form-label me-2 text-end" style="width: 200px;">Desde</label>
+            <input type="datetime-local" step="60" class="form-control" id="fecha_desde" name="fecha_desde"> 
+        </div>
+        <div class="mb-3 d-flex align-items-center">
+            <label for="fecha_hasta" class="form-label me-2 text-end" style="width: 200px;">Hasta</label>
+            <input type="datetime-local" step="60" class="form-control" id="fecha_hasta" name="fecha_hasta">
+        </div>
+        <button type="submit" class="btn btn-primary mb-3">Crear mensaje</button>
+    </form>
+
+    <!-- Listado de mensajes prioritarios-->
+    <h3 class="mt-5" align="center">Listado</h3>
+    <ul class="list-group mb-3 border border-secondary">
+        {% for prio in list_mensprio %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <!-- Muestra en la lista los datos relevantes de cada mensaje prioritario -->
+            <span>
+                <strong>{{ prio.mensaje }}</strong>
+                <!-- Mostrar fechas y activo -->
+                {% if prio.activo %}(ACTIVO){% endif %}
+                <br>
+                Desde: {{ prio.fecha_desde.strftime('%d/%m/%Y, %H:%M') if prio.fecha_desde else '--'  }} |
+                Hasta: {{ prio.fecha_hasta.strftime('%d/%m/%Y, %H:%M') if prio.fecha_hasta else '--' }}
+            </span>
+
+            <!-- Botón para abrir el modal de borrado -->
+            <button type="button"
+                    class="btn btn-danger btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalBorrarPrio{{ prio.id }}">
+                Eliminar
+            </button>
+        </li>
+
+        <!-- Modal de borrado -->
+        <div class="modal fade" id="modalBorrarPrio{{ prio.id }}" tabindex="-1"
+             aria-labelledby="modalBorrarPrioLabel{{ prio.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalBorrarPrioLabel{{ prio.id }}">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas eliminar el mensaje prioritario
+                        <strong>{{ prio.mensaje }}</strong>?
+                    </div>
+                    <!-- Boton cancelar -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        
+                        <!-- Boton borrado -->
+                        <form method="POST" action="{{ url_for('views.prioritarios_delete') }}">
+                            <input type="hidden" name="prio_id" value="{{ prio.id }}">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Si no hay nada en la tabla, mensaje-->
+        {% endfor %} {% if not list_mensprio %}
+        <li class="list-group-item">No hay mensajes prioritarios creados</li>
+        {% endif %}
+    </ul>
+</div>
+
+{% endblock %}

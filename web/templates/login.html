@@ -1,12 +1,15 @@
-<!-- PLANTILLA LOGIN -->
+<!-- PAGINA FORMULARIO DE ACCESO, "/login"  -->
 
+<!-- Definición de Jinja para añadir el contenido particular de esta página en los bloques de la plantilla base-->
 {% extends "layout.html" %}
 {% block title %}Log In{% endblock %}
-
 {% block content %}
+
+<!-- Código HTML de la página-->
     <!-- Formulario con los dos campos para login -->
     <form action="/login" method="post">
         <h3 align="center">Acceso a la aplicación</h3>
+
         <div class="mb-3"> 
             <label for="username" class="form-label">Usuario</label>
             <input type="text" class="form-control" id="username" name="username" placeholder="Introduzca usuario">
@@ -15,5 +18,8 @@
             <label for="password" class="form-label">Contraseña</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="***">
         </div>
+
+        <!-- Botón de envío del formulario -->
         <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+
 {% endblock %}
