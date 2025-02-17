@@ -40,7 +40,7 @@ Una vez descargado el fichero comprimido con la aplicación, se deben seguir uno
 -sudo apt install vlc  
 
 ### Creación entorno virtual Python para este proyecto, ubicándose en la ruta raiz donde se encuentren los ficheros:
-cd /home/<usuario>/paninfo/
+cd /home/_usuario_/paninfo/
 -python3 -m venv venv_tfe
 
 ### Activación entorno virtual:
@@ -49,7 +49,7 @@ cd /home/<usuario>/paninfo/
 ### Instalación librerías Python necesarias, con entorno virtual cargado, recopiladas en el fichero paquetes_pip.txt:
 -pip install -r paquetes_pip.txt  
 En caso de no haber cargado el entorno virtual, es necesario utilizar su intérprete de Python, lo ejecutaremos así:  
--/home/<usuario>/paninfo/venv_tfe/bin/python -m pip install -r paquetes_pip.txt
+-/home/_usuario_/paninfo/venv_tfe/bin/python -m pip install -r paquetes_pip.txt
 
 
 ## Ejecución entorno pruebas
@@ -59,5 +59,5 @@ Para el módulo core, se ejecutará en otra ventana de consola el comando python
 y creará y mostrará la información almacenada.
 
 Si queremos usar directamente los binarios del entorno virtual sin haberlo cargado previamente,  
--/home/<usuario>/paninfo/venv_tfe/bin/python main.py  
--/home/<usuario>/paninfo/venv_tfe/bin/python core.py  
+-/home/_usuario_/paninfo/venv_tfe/bin/python main.py  
+-/home/_usuario_/paninfo/venv_tfe/bin/python core.py  
