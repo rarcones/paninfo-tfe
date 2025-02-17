@@ -17,7 +17,7 @@ El sistema se compone de dos módulos diferenciados, para un sistema operativo L
 
 
 ## Componentes
-El sistema utiliza los siguientes componentes principales:
+El sistema utiliza los siguientes componentes principales:  
 -Python  
 -Flask  
 -Gunicorn  
@@ -33,23 +33,23 @@ El proyecto ha sido desarrollado en una distribución Linux con entorno gráfico
 Una vez descargado el fichero comprimido con la aplicación, se deben seguir unos pasos a modo de preparacion e instalación.
 
 ### Aplicaciones del S.O. Linux:
-sudo apt install python3
-sudo apt install python3-venv
-sudo apt install python3-pip
-sudo apt install libmagickwand-dev
-sudo apt install vlc
+-sudo apt install python3  
+-sudo apt install python3-venv  
+-sudo apt install python3-pip  
+-sudo apt install libmagickwand-dev  
+-sudo apt install vlc  
 
 ### Creación entorno virtual Python para este proyecto, ubicándose en la ruta raiz donde se encuentren los ficheros:
 cd /home/<usuario>/paninfo/
-python3 -m venv venv_tfe
+-python3 -m venv venv_tfe
 
 ### Activación entorno virtual:
-source venv_tfe/bin/activate
+-source venv_tfe/bin/activate
 
 ### Instalación librerías Python necesarias, con entorno virtual cargado, recopiladas en el fichero paquetes_pip.txt:
-pip install -r paquetes_pip.txt
-En caso de no haber cargado el entorno virtual, es necesario utilizar su intérprete de Python, lo ejecutaremos así:
-/home/<usuario>/paninfo/venv_tfe/bin/python -m pip install -r paquetes_pip.txt
+-pip install -r paquetes_pip.txt  
+En caso de no haber cargado el entorno virtual, es necesario utilizar su intérprete de Python, lo ejecutaremos así:  
+-/home/<usuario>/paninfo/venv_tfe/bin/python -m pip install -r paquetes_pip.txt
 
 
 ## Ejecución entorno pruebas
@@ -58,6 +58,6 @@ el comando python main.py. Esto mostrará un mensaje con la URL a la que acceder
 Para el módulo core, se ejecutará en otra ventana de consola el comando python core.py, que leera los repositorios 
 y creará y mostrará la información almacenada.
 
-Si queremos usar directamente los binarios del entorno virtual sin haberlo cargado previamente,
-/home/<usuario>/paninfo/venv_tfe/bin/python main.py
-/home/<usuario>/paninfo/venv_tfe/bin/python core.py
+Si queremos usar directamente los binarios del entorno virtual sin haberlo cargado previamente,  
+-/home/<usuario>/paninfo/venv_tfe/bin/python main.py  
+-/home/<usuario>/paninfo/venv_tfe/bin/python core.py  
