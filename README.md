@@ -10,20 +10,21 @@ Usando Python como lenguaje principal, y sobre una distribución Linux en cualqu
 
 ## Funcionamiento
 El sistema se compone de dos módulos diferenciados, para un sistema operativo Linux, que trabajando conjuntamente conforman el sistema.
-**WEB:** Este módulo hace la función de GUI. Mediante una aplicación Flask completa, el usuario puede subir y crear el contenido que se desea mostrar en la pantalla.
+
+**WEB:** Este módulo hace la función de GUI. Mediante una aplicación Flask completa, el usuario puede subir y crear el contenido que se desea mostrar en la pantalla. 
 
 **CORE:** Este módulo hace la función de "backend", lee el contenido disponible en el repositorio y, acorde a ciertas reglas de programación, crea listas de reproducción que VLC cargará y reproducirá.
 
 
 ## Componentes
 El sistema utiliza los siguientes componentes principales:
--Python
--Flask
--Gunicorn
--SQLite
--VLC
--PyMuPDF
--Wand
+-Python  
+-Flask  
+-Gunicorn  
+-SQLite  
+-VLC  
+-PyMuPDF  
+-Wand  
 
 
 
