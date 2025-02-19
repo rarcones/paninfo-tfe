@@ -40,7 +40,7 @@ Una vez descargado el fichero comprimido con la aplicación, se deben seguir uno
 -sudo apt install vlc  
 
 ### Creación entorno virtual Python para este proyecto, ubicándose en la ruta raiz donde se encuentren los ficheros:
-cd /home/_usuario_/paninfo/
+cd /home/_usuario_/paninfo/  
 -python3 -m venv venv_tfe
 
 ### Activación entorno virtual:
@@ -52,7 +52,7 @@ En caso de no haber cargado el entorno virtual, es necesario utilizar su intérp
 -/home/_usuario_/paninfo/venv_tfe/bin/python -m pip install -r paquetes_pip.txt
 
 
-## Ejecución entorno pruebas
+## Ejecución en entorno pruebas
 Se deberá ejecutar el módulo web, dentro del directorio raiz y con el entorno virtual cargado en una ventana de consola con
 el comando python main.py. Esto mostrará un mensaje con la URL a la que acceder desde el navegador.
 Para el módulo core, se ejecutará en otra ventana de consola el comando python core.py, que leera los repositorios 
@@ -61,3 +61,14 @@ y creará y mostrará la información almacenada.
 Si queremos usar directamente los binarios del entorno virtual sin haberlo cargado previamente,  
 -/home/_usuario_/paninfo/venv_tfe/bin/python main.py  
 -/home/_usuario_/paninfo/venv_tfe/bin/python core.py  
+
+
+## Ejecución en entorno productivo
+Para la ejecución del módulo web, se recomienda utilizar un protocolo seguro de comunicación, lo mas sencillo para el proyecto es generar un certificado SSL autofirmado, que el servidor Gunicorn utilizará para usar HTTPS. En este caso se genera con una duración de 5 años;  
+
+openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 1460
+
+Una vez creado, para ejecutar la aplicación Flask del panel informativo de forma segura en Gunicorn;  
+gunicorn --certfile=/_ruta certificados_/cert.pem  --keyfile=/_ruta certificados_/key.pem --workers 2 --bind 0.0.0.0:443 main:app 
+
+Se recomienda la ejecución del módulo web como servicio systemd en el sistema operativo.
