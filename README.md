@@ -66,9 +66,9 @@ Si queremos usar directamente los binarios del entorno virtual sin haberlo carga
 ## Ejecución en entorno productivo
 Para la ejecución del módulo web, se recomienda utilizar un protocolo seguro de comunicación, lo mas sencillo para el proyecto es generar un certificado SSL autofirmado, que el servidor Gunicorn utilizará para usar HTTPS. En este caso se genera con una duración de 5 años;  
 
-openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 1460
+-openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 1460
 
 Una vez creado, para ejecutar la aplicación Flask del panel informativo de forma segura en Gunicorn;  
-gunicorn --certfile=/_ruta certificados_/cert.pem  --keyfile=/_ruta certificados_/key.pem --workers 2 --bind 0.0.0.0:443 main:app 
+-gunicorn --certfile=/_ruta certificados_/cert.pem  --keyfile=/_ruta certificados_/key.pem --workers 2 --bind 0.0.0.0:443 main:app 
 
 Se recomienda la ejecución del módulo web como servicio systemd en el sistema operativo.
