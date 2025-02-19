@@ -16,6 +16,7 @@ El sistema se compone de dos módulos diferenciados, para un sistema operativo L
 **CORE:** Este módulo hace la función de "backend", lee el contenido disponible en el repositorio y, acorde a ciertas reglas de programación, crea listas de reproducción que VLC cargará y reproducirá.
 
 
+
 ## Componentes
 El sistema utiliza los siguientes componentes principales:  
 -Python  
@@ -33,11 +34,8 @@ El proyecto ha sido desarrollado en una distribución Linux con entorno gráfico
 Una vez descargado el fichero comprimido con la aplicación, se deben seguir unos pasos a modo de preparacion e instalación.
 
 ### Aplicaciones del S.O. Linux:
--sudo apt install python3  
--sudo apt install python3-venv  
--sudo apt install python3-pip  
--sudo apt install libmagickwand-dev  
--sudo apt install vlc  
+-sudo apt install python3 python3-venv python3-pip  
+-sudo apt install libmagickwand-dev vlc  
 
 ### Creación entorno virtual Python para este proyecto, ubicándose en la ruta raiz donde se encuentren los ficheros:
 cd /home/_usuario_/paninfo/  
@@ -52,15 +50,17 @@ En caso de no haber cargado el entorno virtual, es necesario utilizar su intérp
 -/home/_usuario_/paninfo/venv_tfe/bin/python -m pip install -r paquetes_pip.txt
 
 
+
 ## Ejecución en entorno pruebas
 Se deberá ejecutar el módulo web, dentro del directorio raiz y con el entorno virtual cargado en una ventana de consola con
 el comando python main.py. Esto mostrará un mensaje con la URL a la que acceder desde el navegador.
 Para el módulo core, se ejecutará en otra ventana de consola el comando python core.py, que leera los repositorios 
 y creará y mostrará la información almacenada.
 
-Si queremos usar directamente los binarios del entorno virtual sin haberlo cargado previamente,  
+Si queremos usar directamente los binarios del entorno virtual sin haberlo cargado previamente:  
 -/home/_usuario_/paninfo/venv_tfe/bin/python main.py  
 -/home/_usuario_/paninfo/venv_tfe/bin/python core.py  
+
 
 
 ## Ejecución en entorno productivo
@@ -68,7 +68,26 @@ Para la ejecución del módulo web, se recomienda utilizar un protocolo seguro d
 
 -openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 1460
 
-Una vez creado, para ejecutar la aplicación Flask del panel informativo de forma segura en Gunicorn;  
+Una vez creado, para ejecutar la aplicación Flask del panel informativo de forma segura en Gunicorn: 
+ 
 -gunicorn --certfile=/_ruta certificados_/cert.pem  --keyfile=/_ruta certificados_/key.pem --workers 2 --bind 0.0.0.0:443 main:app 
 
 Se recomienda la ejecución del módulo web como servicio systemd en el sistema operativo.
+
+Para la ejecución desatendida del módulo core, se recomienda crear un fichero .desktop en el directorio del usuario _~/.config/autostart/_ para que el programa arranque con el inicio 
+de sesión y carga del entorno gráfico del usuario.  
+
+Los pasos a seguir, son crear el directorio (En Ubuntu LTS no existe por defecto) y crear el fichero:  
+
+-mkdir -p ~/.config/autostart  
+-nano ~/.config/autostart/paninfocore.desktop
+
+Añadimos al fichero .desktop:  
+
+[Desktop Entry]
+Type=Application
+Name=PaninfoCore
+Comment=Core para gestión de contenidos del panel informativo
+Path=/home/_usuario_/paninfo
+Exec=/home/_usuario_/paninfo/venv_tfe/bin/python core.py
+Terminal=false
