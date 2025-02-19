@@ -18,7 +18,8 @@ import os
 views = Blueprint('views', __name__) 
 
 # Rutas (Páginas) de la aplicacion web
-# Define la ruta base. Cuando el usuario accede a la raíz de la web "/", se llama a la función que muestra ella plantilla index.html, con el valor de la variable user del usuario autenticado.
+
+# Define la ruta base. Cuando el usuario accede a la raíz de la web "/", recibida como parámetro, se llama a la función que muestra la plantilla index.html, con el valor de la variable user del usuario autenticado.
 @views.route('/')
 def index():
     return render_template("index.html", user=current_user)

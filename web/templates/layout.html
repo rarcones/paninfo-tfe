@@ -12,6 +12,9 @@
 
     <!-- Carga de Bootstrasp CSS v5.3.3 en local, en vez de directo al CDN. Todas las plantillas pueden usarlo al heredar de aqui -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     
     
     <title>{% block title %}{% endblock %}</title>
