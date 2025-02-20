@@ -52,35 +52,31 @@ En caso de no haber cargado el entorno virtual, es necesario utilizar su intérp
 
 
 ## Ejecución en entorno pruebas
-Se deberá ejecutar el módulo web, dentro del directorio raiz y con el entorno virtual cargado en una ventana de consola con
+Se deberá ejecutar, por un lado el módulo web dentro del directorio raiz y con el entorno virtual cargado 
 el comando python main.py. Esto mostrará un mensaje con la URL a la que acceder desde el navegador.
-Para el módulo core, se ejecutará en otra ventana de consola el comando python core.py, que leera los repositorios 
+Para el módulo core, se ejecutará por otro lado, en otra ventana de consola el comando python core.py, que leerá los repositorios 
 y creará y mostrará la información almacenada.
 
-Si queremos usar directamente los binarios del entorno virtual sin haberlo cargado previamente:  
+Si queremos usar directamente los binarios del entorno virtual (En algú script, por ejemplo) sin haberlo cargado previamente:  
 -/home/_usuario_/paninfo/venv_tfe/bin/python main.py  
 -/home/_usuario_/paninfo/venv_tfe/bin/python core.py  
 
 
 
 ## Ejecución en entorno productivo
-Para la ejecución del módulo web, se recomienda utilizar un protocolo seguro de comunicación, lo mas sencillo para el proyecto es generar un certificado SSL autofirmado, que el servidor Gunicorn utilizará para usar HTTPS. En este caso se genera con una duración de 5 años;  
-
+Para la ejecución del módulo web, es recomendable utilizar un protocolo seguro de comunicación. Lo mas sencillo para el proyecto es generar un certificado SSL autofirmado que el servidor Gunicorn utilizará para usar HTTPS. Con este comando se genera para una duración de 5 años:  
 -openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 1460
 
 Una vez creado, para ejecutar la aplicación Flask del panel informativo de forma segura en Gunicorn: 
- 
--gunicorn --certfile=/_ruta certificados_/cert.pem  --keyfile=/_ruta certificados_/key.pem --workers 2 --bind 0.0.0.0:443 main:app 
+ -gunicorn --certfile=/_ruta certificados_/cert.pem  --keyfile=/_ruta certificados_/key.pem --workers 2 --bind 0.0.0.0:443 main:app 
 
 Se recomienda la ejecución del módulo web como servicio systemd en el sistema operativo.
 
-Para la ejecución desatendida del módulo core, se recomienda crear un fichero .desktop en el directorio del usuario _~/.config/autostart/_ para que el programa arranque con el inicio 
-de sesión y carga del entorno gráfico del usuario.  
+Para la ejecución del módulo core, se recomienda crear un fichero .desktop en el directorio del usuario _~/.config/autostart/_ para que el programa arranque con el inicio de sesión y carga del entorno gráfico del usuario.  
 
-Los pasos a seguir, son crear el directorio (En Ubuntu LTS no existe por defecto) y crear el fichero:  
-
+Los pasos a seguir, son crear el directorio autostart (En Ubuntu LTS no existe por defecto) y crear el fichero:  
 -mkdir -p ~/.config/autostart  
--nano ~/.config/autostart/paninfocore.desktop
+-nano ~/.config/autostart/paninfocore.desktop  
 
 Añadimos al fichero .desktop:  
 
@@ -90,4 +86,6 @@ Name=PaninfoCore
 Comment=Core para gestión de contenidos del panel informativo
 Path=/home/_usuario_/paninfo
 Exec=/home/_usuario_/paninfo/venv_tfe/bin/python core.py
-Terminal=false
+Terminal=false  
+
+Se debe permitir que el usuario que ejecuta la aplicación tenga activado el inicio de sesión automático en el SO, y desactivado todos los bloqueos de pantalla y suspensión, para que una vez encendido el ordenador con el sistema, se muestre directamente el escritorio y arranque la aplicación core gracias al fichero .desktop.
